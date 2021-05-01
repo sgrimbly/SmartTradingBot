@@ -3,7 +3,7 @@
 # Partially inspired by https://github.com/pskrunner14/trading-bot
 
 import random
-from typing import List, Optional
+from typing import List, Optional, Union
 
 import numpy as np
 import tensorflow as tf
@@ -11,7 +11,7 @@ from tensorflow.keras import Model
 from tensorflow.keras.models import clone_model, load_model
 from tensorflow.keras.optimizers import Adam
 
-from SmartTradingBot import QNetwork, ReplayMemory
+from SmartTradingBot import memory, networks
 
 
 class DQNAgent:
@@ -53,35 +53,36 @@ class DQNAgent:
         self._loss = loss
         self._epsilon = epsilon
         self._epsilon_decay_rate = epsilon_decay_rate
-        self._action_dim = 3
 
-        self._iteration = 0
+        self._iteration = 1
         self._optimizer = Adam(self._learning_rate)
-        self.memory = ReplayMemory(
+        self.memory = memory.ReplayMemory(
             self._action_dim,
             self._buffer_size,
             self._batch_size,
         )
+        self.model = ""
         if self._model_name is not None:
             self.model = self._load_model()
         else:
-            self.model = QNetwork(
+            q_network = networks.QNetwork(
                 self._state_dim,
                 self._action_dim,
                 self._hidden_layer_sizes,
                 self._activation,
             )
-        self.model.compile(loss=self._loss, optimizer=self._optimizer)
+            self.model = q_network.get_model()
+        self.model.compile(self._optimizer, loss=self._loss)
         self.target_model = clone_model(self.model)
 
     def act(self, state: tf.Tensor, evaluation: bool = False) -> float:
         """Choose an action without learning."""
-        if self._iteration == 1:
-            return 1  # Buy on first step
-        elif random.random() < self._epsilon and not evaluation:
+        #if self._iteration == 1:
+        #    return 1  # Buy on first step
+        if random.random() < self._epsilon and not evaluation:
             return random.randrange(self._action_dim)
         # Choose action that leads to highest state-action value
-        return tf.argmax(self.model(state))
+        return tf.argmax(self.model(state)[0]).numpy()
 
     def step(
         self,
@@ -90,19 +91,20 @@ class DQNAgent:
         reward: float,
         next_state: tf.Tensor,
         done: bool,
-    ) -> None:
+    ) -> Union[float, bool]:
         """Experience a step in the environment."""
         self._iteration += 1
         self.memory.add(state, action, reward, next_state, done)
+
+        # Decay random action probability
+        self._epsilon = self._epsilon * self._epsilon_decay_rate
 
         if (
             self._iteration % self._learning_freq == 0
             and len(self.memory) > self._batch_size
         ):
-            self.learn()
-
-        # Decay random action probability
-        self._epsilon = self._epsilon * self._epsilon_decay_rate
+            return self.learn()
+        return False
 
     def learn(self) -> float:
         minibatch = self.memory.sample()
@@ -117,17 +119,18 @@ class DQNAgent:
                 target = reward
             else:
                 target = reward + self._discount * tf.reduce_max(
-                    self.target_model(next_state)
+                    self.target_model(next_state)[0]
                 )
-            q_value = tf.reduce_max(self.model(state))
+            q_values = self.model.predict(state)
+            q_values[0][action] = target
 
-            X_train.append(target)
-            y_train.append(q_value)
+            X_train.append(state[0])
+            y_train.append(q_values[0])
 
-        loss = self.model.fit(
+        fit = self.model.fit(
             np.array(X_train), np.array(y_train), epochs=1, verbose=0
-        ).history["loss"][0]
-        return loss
+        )
+        return fit.history["loss"][0]
 
     def _load_model(self) -> Model:
         """Load a pretrained model if specified."""

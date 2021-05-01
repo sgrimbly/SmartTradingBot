@@ -6,7 +6,7 @@ from tensorflow.keras.layers import Dense
 """Possible agent network structures implemented as Tensorflow Modules"""
 
 
-class QNetwork(tf.Module):
+class QNetwork():
     """Create the neural network architecture for the DQN agent."""
 
     def __init__(
@@ -16,7 +16,6 @@ class QNetwork(tf.Module):
         hidden_layer_sizes: List = [128, 256, 256, 128],
         activation: str = "relu",
     ):
-        super(QNetwork, self).__init__()
 
         self._state_dim = state_dim
         self._action_dim = action_dim
@@ -39,5 +38,5 @@ class QNetwork(tf.Module):
 
         self._model.add(Dense(self._action_dim, activation="linear"))
 
-    def __call__(self, states: tf.Tensor) -> tf.Tensor:
-        return self._model(states)
+    def get_model(self) -> tf.keras.Model:
+        return self._model
