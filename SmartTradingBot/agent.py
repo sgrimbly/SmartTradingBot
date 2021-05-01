@@ -6,13 +6,12 @@ import random
 from typing import List, Union
 
 import tensorflow as tf
+from memory import ReplayMemory
+from networks import QNetwork
 from tensorflow.keras import Model
 from tensorflow.keras.losses import Loss, MeanSquaredError
 from tensorflow.keras.models import clone_model, load_model
 from tensorflow.keras.optimizers import Adam
-
-from memory import ReplayMemory
-from networks import QNetwork
 
 
 class DQNAgent:

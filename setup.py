@@ -1,16 +1,13 @@
 """Install script for setuptools."""
 
-import datetime
-import sys
-from importlib import util as import_util
-
 from setuptools import find_packages, setup
 
 # Get the version from metadata.
 # version = _metadata.__version__  # type: ignore
 
-long_description = """Smart Trading Bot is an application of reinforcement learning to financial trading.
-It is intended as a fun project for experimenting with financial applications of modern RL."""
+long_description = """Smart Trading Bot is an application of reinforcement
+learning to financial trading. It is intended as a fun project for
+experimenting with financial applications of modern RL."""
 
 testing_formatting_requirements = [
     "pre-commit",
@@ -26,7 +23,7 @@ yf_requirements = ["yfinance>=0.1.59"]
 
 setup(
     name="id-mava",
-    #version=version,
+    # version=version,
     description="A Python library for Multi-Agent Reinforcement Learning.",
     long_description=long_description,
     long_description_content_type="text/markdown",
