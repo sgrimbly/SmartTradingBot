@@ -1,4 +1,4 @@
-# 🤖 Smart Trading Bot
+# Smart Trading Bot 🤖 
 This code implements algorithms for automatically fetching historical trading data, using it to train a reinforcement learning agent, and then executing trades on a platform. 
 
 Currently supporting:
