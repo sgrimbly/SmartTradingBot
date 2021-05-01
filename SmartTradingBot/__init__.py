@@ -1,8 +1,8 @@
 """SmartTradingBot is a repo for creating, training, and executing RL
 trading agents."""
 
-from agent import DQNAgent
-from memory import ReplayMemory
-from networks import QNetwork
+from agent import DQNAgent  # type: ignore
+from memory import ReplayMemory  # type: ignore
+from networks import QNetwork  # type: ignore
 
-from SmartTradingBot import agent, memory, networks
+from SmartTradingBot import agent, memory, networks  # type: ignore

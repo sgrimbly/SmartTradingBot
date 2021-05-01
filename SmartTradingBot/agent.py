@@ -3,15 +3,15 @@
 # Partially inspired by https://github.com/pskrunner14/trading-bot
 
 import random
-from typing import List, Union
+from typing import List, Optional
 
+import numpy as np
 import tensorflow as tf
-from memory import ReplayMemory
-from networks import QNetwork
 from tensorflow.keras import Model
-from tensorflow.keras.losses import Loss, MeanSquaredError
 from tensorflow.keras.models import clone_model, load_model
 from tensorflow.keras.optimizers import Adam
+
+from SmartTradingBot import QNetwork, ReplayMemory
 
 
 class DQNAgent:
@@ -26,11 +26,11 @@ class DQNAgent:
         discount: float = 0.99,
         batch_size: int = 32,
         buffer_size: int = 1000,
-        model_name: Union[None, str] = None,
+        model_name: Optional[str] = None,
         learning_freq: int = 4,
-        target_update_freq: int = 10e3,
+        target_update_freq: int = 1000,
         learning_rate: float = 1e-3,
-        loss: Loss = MeanSquaredError,
+        loss: str = "mse",
         epsilon: float = 0.01,  # Probability of random action
         epsilon_decay_rate: float = 1e-5,
     ) -> None:
@@ -63,7 +63,7 @@ class DQNAgent:
             self._batch_size,
         )
         if self._model_name is not None:
-            self.model = self._load()
+            self.model = self._load_model()
         else:
             self.model = QNetwork(
                 self._state_dim,
@@ -71,9 +71,10 @@ class DQNAgent:
                 self._hidden_layer_sizes,
                 self._activation,
             )
+        self.model.compile(loss=self._loss, optimizer=self._optimizer)
         self.target_model = clone_model(self.model)
 
-    def act(self, state: tf.Tensor, evaluation: bool = False):
+    def act(self, state: tf.Tensor, evaluation: bool = False) -> float:
         """Choose an action without learning."""
         if self._iteration == 1:
             return 1  # Buy on first step
@@ -109,6 +110,8 @@ class DQNAgent:
         if self._iteration % self._target_update_freq == 0:
             self.target_model.set_weights(self.model.get_weights())
 
+        X_train, y_train = [], []
+
         for state, action, reward, next_state, done in minibatch:
             if done:
                 target = reward
@@ -118,13 +121,18 @@ class DQNAgent:
                 )
             q_value = tf.reduce_max(self.model(state))
 
-            loss = self._loss(target, q_value).numpy()
-            return loss
+            X_train.append(target)
+            y_train.append(q_value)
+
+        loss = self.model.fit(
+            np.array(X_train), np.array(y_train), epochs=1, verbose=0
+        ).history["loss"][0]
+        return loss
 
     def _load_model(self) -> Model:
         """Load a pretrained model if specified."""
         return load_model(
-            "models/" + self.model_name, custom_objects=self.custom_objects
+            "models/" + self._model_name, custom_objects={}  # type: ignore
         )
 
     # def save(self, episode):

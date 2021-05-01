@@ -1,13 +1,17 @@
 from datetime import date
-from typing import Tuple
+from typing import Optional, Tuple
 
-import yfinance as yf
+import yfinance as yf  # type: ignore
 
 """Utility functions used by other files."""
 
 
 def get_data(
-    stock, start_date, end_date=None, test_split=0.8, data_type="Adj Close"
+    stock: str,
+    start_date: str = "2021-01-01",
+    end_date: Optional[str] = None,
+    test_split: float = 0.8,
+    data_type: str = "Adj Close",
 ) -> Tuple:
     """Get the Yahoo data for a given stock in a specified date range."""
     if end_date is None:
