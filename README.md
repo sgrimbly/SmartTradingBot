@@ -12,3 +12,5 @@ I am open to open source contributions. Please follow the CONTRIBUTING guideline
 
 # NOTE
 Please ensure you understand the code license before using in a production environment.
+
+<img src="DQN.png" alt="drawing" width="700"/>
