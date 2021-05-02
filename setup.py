@@ -22,14 +22,14 @@ tf_requirements = ["tensorflow>=2.4.0"]
 yf_requirements = ["yfinance>=0.1.59"]
 
 setup(
-    name="id-mava",
+    name="id-SmartTrainerBot",
     # version=version,
-    description="A Python library for Multi-Agent Reinforcement Learning.",
+    description="Smart Trading Bot is an application of RL to financial trading",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="InstaDeep",
     license="Apache License, Version 2.0",
-    keywords="multi-agent reinforcement-learning python machine learning",
+    keywords="finance machine learning reinforcement learning",
     packages=find_packages(),
     install_requires=["numpy"],
     extras_require={
