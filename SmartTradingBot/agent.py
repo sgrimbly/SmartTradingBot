@@ -61,7 +61,7 @@ class DQNAgent:
             self._buffer_size,
             self._batch_size,
         )
-        self.model = ""
+        # self.model = ""
         if self._model_name is not None:
             self.model = self._load_model()
         else:
@@ -77,7 +77,7 @@ class DQNAgent:
 
     def act(self, state: tf.Tensor, evaluation: bool = False) -> float:
         """Choose an action without learning."""
-        #if self._iteration == 1:
+        # if self._iteration == 1:
         #    return 1  # Buy on first step
         if random.random() < self._epsilon and not evaluation:
             return random.randrange(self._action_dim)
@@ -127,9 +127,7 @@ class DQNAgent:
             X_train.append(state[0])
             y_train.append(q_values[0])
 
-        fit = self.model.fit(
-            np.array(X_train), np.array(y_train), epochs=1, verbose=0
-        )
+        fit = self.model.fit(np.array(X_train), np.array(y_train))
         return fit.history["loss"][0]
 
     def _load_model(self) -> Model:

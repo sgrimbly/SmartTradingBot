@@ -6,7 +6,7 @@ from tensorflow.keras.layers import Dense
 """Possible agent network structures implemented as Tensorflow Modules"""
 
 
-class QNetwork():
+class QNetwork:
     """Create the neural network architecture for the DQN agent."""
 
     def __init__(
