@@ -21,3 +21,4 @@ Please ensure you understand the code license before using in a production envir
 ### References
 - [Playing Atari with Deep Reinforcement Learning](https://arxiv.org/abs/1312.5602)
 - [Prioritized Experience Replay](https://arxiv.org/abs/1511.05952)
+- [Trading Bot](https://github.com/pskrunner14/trading-bot)
