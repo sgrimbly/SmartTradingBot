@@ -26,7 +26,7 @@ def train_bot(
     data_length = len(data) - 1
 
     purchased = []
-    avg_loss = []  # type : ignore
+    avg_loss = []  # type:ignore
 
     data = utils.normalised_difference(data)
     state = utils.padded_window(data, timestep=0, window_size=window_size)

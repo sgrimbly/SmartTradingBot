@@ -56,8 +56,9 @@ def padded_window(
     t = timestep
     d = t - window_size + 1
     data = list(data)
-    data = (
-        data[d : t + 1] if d >= 0 else -d * [data[0]] + data[0 : t + 1]  # type:ignore
-    )
+    if d >= 0:
+        data = data[d : t + 1]  # noqa: E203
+    else:
+        data = -d * [data[0]] + data[0 : t + 1]  # noqa: E203
     data = tf.constant(data)
     return tf.reshape(data, shape=(1, -1))
