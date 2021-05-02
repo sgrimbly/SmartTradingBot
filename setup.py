@@ -24,7 +24,7 @@ yf_requirements = ["yfinance>=0.1.59"]
 setup(
     name="id-SmartTrainerBot",
     # version=version,
-    description="Smart Trading Bot is an application of RL to financial trading",
+    description="Smart Trading Bot is an application of RL to finance trading",
     long_description=long_description,
     long_description_content_type="text/markdown",
     author="InstaDeep",
