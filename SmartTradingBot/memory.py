@@ -38,8 +38,7 @@ class ReplayMemory:
         self._memory.append(experience)
 
     def sample(self) -> List[Tuple]:
-        experience = random.sample(self._memory, k=self._batch_size)
-        return experience
+        return random.sample(self._memory, k=self._batch_size)
 
     def __len__(self) -> int:
         return len(self._memory)
